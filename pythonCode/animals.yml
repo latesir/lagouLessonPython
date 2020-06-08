@@ -1,0 +1,10 @@
+- cat:
+      age: 1.5
+      colour: white with black
+      name: "\u56E2\u5B50"
+      sex: male
+- dog:
+      age: 3
+      colour: white
+      name: "\u8C6A\u8C6A"
+      sex: male

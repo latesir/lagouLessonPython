@@ -1,0 +1,98 @@
+"""
+课后作业：自己写一个面向对象的例子
+描述：
+    1、创建一个类（Animal）【动物类】，类里有属性（名称，颜色，年龄，性别），类方法（会叫，会跑）
+        创建子类【猫】，继承【动物类】，
+            - 复写父类的__init__方法，继承父类的属性，
+            - 添加一个新的属性，毛发=短毛，
+            - 添加一个新的方法， 会捉老鼠，
+            - 复写父类的‘【会叫】的方法，改成【喵喵叫】
+        创建子类【狗】，继承【动物类】，
+            - 复写父类的__init__方法，继承父类的属性，
+            - 添加一个新的属性，毛发=长毛，
+            - 添加一个新的方法， 会看家，
+            - 复写父类的【会叫】的方法，改成【汪汪叫】
+    2、创建一个猫猫实例
+        - 调用捉老鼠的方法
+        - 打印【猫猫的姓名，颜色，年龄，性别，毛发，捉到了老鼠】。
+    3、创建一个狗狗实例
+        - 调用【会看家】的方法
+        - 打印【狗狗的姓名，颜色，年龄，性别，毛发】。
+    4、使用 yaml 来管理实例的属性
+    5、提交代码到自己的github仓库， 贴到作业贴上
+"""
+import yaml
+
+
+class Animal:
+    name: str = "animal"
+    colour: str = "white"
+    age: float = 2
+    sex: str = "male"
+
+    def __init__(self, name, colour, age, sex):
+        self.name = name
+        self.colour = colour
+        self.age = age
+        self.sex = sex
+
+    def cry(self):
+        print(f"{self.name} can cry.")
+
+    def run(self):
+        print(f"{self.name} can run.")
+
+
+class Cat(Animal):
+    def __init__(self, name, colour, age, sex, hair="short"):
+        super().__init__(name, colour, age, sex)
+        self.hair = hair
+
+    def catchMouse(self):
+        print(f"{self.name} can catch mouse.")
+        return f"{self.name} has catched a mouse."
+
+    def cry(self):
+        print(f"{self.name} cries - miao~miao~")
+
+
+class Dog(Animal):
+    def __init__(self, name, colour, age, sex, hair: str = "long"):
+        super().__init__(name, colour, age, sex)
+        self.hair = hair
+
+    def lookAfterHome(self):
+        print(f"{self.name} can look after home.")
+        return f"{self.name} is looking after home."
+
+    def cry(self):
+        print(f"{self.name} cries - wang!wang!")
+
+
+if __name__ == "__main__":
+    with open("animals.yml", "w") as f:
+        yaml.safe_dump(data=[{"cat": {"name": "团子", "colour": "white with black", "age": 1.5, "sex": "male"}},
+                             {"dog": {"name": "豪豪", "colour": "white", "age": 3, "sex": "male"}}], stream=f)
+    with open("animals.yml", "r") as f:
+        datas = yaml.safe_load(f)
+        catData = datas[0]['cat']
+        dogData = datas[1]['dog']
+
+    cat = Cat(catData['name'], catData['colour'], catData['age'], catData['sex'])
+    catchedMouse = cat.catchMouse()
+    print(f"猫猫的名字是：{cat.name}")
+    print(f"{cat.name}的颜色是：{cat.colour}")
+    print(f"{cat.name}的年龄是：{cat.age}")
+    print(f"{cat.name}的性别是：{cat.sex}")
+    print(f"{cat.name}的毛发长短是：{cat.hair}")
+    print(catchedMouse)
+
+    print("------")
+
+    dog = Dog(dogData['name'], dogData['colour'], dogData['age'], dogData['sex'])
+    dog.lookAfterHome()
+    print(f"狗狗的名字是：{dog.name}")
+    print(f"{dog.name}的颜色是：{dog.colour}")
+    print(f"{dog.name}的年龄是：{dog.age}")
+    print(f"{dog.name}的性别是：{dog.sex}")
+    print(f"{dog.name}的毛发长短是：{dog.hair}")
