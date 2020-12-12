@@ -4,8 +4,7 @@
 # Date: 2020/6/21
 import pytest
 import yaml
-
-from test_pytest_work1.calculator import Calculator
+from work_pytest.calculator import Calculator
 
 
 def get_yaml_data(key):
