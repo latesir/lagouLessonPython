@@ -72,8 +72,6 @@ class TestWechat:
         self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="保存"]').click()
         # 添加成员成功toast校验
         assert '添加成功' == self.driver.find_element_by_xpath("//*[@class='android.widget.Toast']").text
-        # # 回退到"通讯录"页面
-        # self.driver.back()
 
     @pytest.mark.parametrize("name", yaml.safe_load(open("./testData.yaml", encoding="utf-8"))['delMember'])
     def test_delMember(self, name):
