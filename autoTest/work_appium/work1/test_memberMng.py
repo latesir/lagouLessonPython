@@ -5,6 +5,8 @@
 import pytest
 import yaml
 from appium import webdriver
+from appium.webdriver.common.mobileby import MobileBy
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -29,7 +31,7 @@ class TestWechat:
         }
         # 运行appium，前提是要打开appium server
         self.driver = webdriver.Remote("http://127.0.0.1:4723/wd/hub", self.desire_cap)
-        self.driver.implicitly_wait(5)
+        self.driver.implicitly_wait(3)
         # 点击主页上"通讯录"，跳转到通讯录页面
         self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="通讯录"]').click()
 
@@ -37,13 +39,12 @@ class TestWechat:
         self.driver.quit()
 
     def teardown(self):
-        WebDriverWait(self.driver, 2, ignored_exceptions=True).until(self.back_to_contact)
+        WebDriverWait(self.driver, 15).until(self.back_to_contact)
 
     def back_to_contact(self, a):
-        isContact = self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="通讯录"]')
-        if isContact:
-            return True
-        else:
+        try:
+            return self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="通讯录"]')
+        except NoSuchElementException:
             self.driver.back()
             return False
 
@@ -64,13 +65,15 @@ class TestWechat:
             phone)
         # 成员信息录入页面，录入'性别'
         self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="男"]').click()
+        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable(
+            (By.XPATH, f'//android.widget.TextView[@text="{sex}"]')))
         self.driver.find_element(By.XPATH, f'//android.widget.TextView[@text="{sex}"]').click()
         # 成员信息录入页面，点击'保存'
         self.driver.find_element(By.XPATH, '//android.widget.TextView[@text="保存"]').click()
         # 添加成员成功toast校验
         assert '添加成功' == self.driver.find_element_by_xpath("//*[@class='android.widget.Toast']").text
-        # 回退到"通讯录"页面
-        self.driver.back()
+        # # 回退到"通讯录"页面
+        # self.driver.back()
 
     @pytest.mark.parametrize("name", yaml.safe_load(open("./testData.yaml", encoding="utf-8"))['delMember'])
     def test_delMember(self, name):
